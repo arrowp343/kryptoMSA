@@ -52,6 +52,9 @@ public enum HSQLDB {
         sqlStringBuilder02.append("CREATE UNIQUE INDEX IF NOT EXISTS idx_algorithms ON algorithms (name)");
         System.out.println("sqlStringBuilder : " + sqlStringBuilder02.toString());
         update(sqlStringBuilder02.toString());
+
+        String insertType = "INSERT INTO types (id, name) VALUES ('0', 'shift'), ('1', 'rsa');";
+        update(insertType);
     }
 
     /*
