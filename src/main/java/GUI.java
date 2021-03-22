@@ -1,12 +1,9 @@
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -41,113 +38,105 @@ public class GUI extends Application {
         outputArea.setWrapText(true);
         outputArea.setEditable(false);
 
-        executeButton.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent event) {
-                System.out.println("[execute] pressed");
-                try{
-                    Query query = new Query(commandLineArea.getText());
-                    switch (query.getAction()){
-                        case encrypt:
-                        case decrypt:
-                            String result;
-                            switch (query.getAlgorithm()){
-                                case Shift:
-                                    //TODO shift encrypt/decrypt
-                                case RSA:
-                                    //TODO rsa encrypt/decrypt
-                                    break;
-                            }
-                            break;
-                        case crack:
-                            //TODO  crack shift/rsa
-                            break;
-                        case register:
-                            //TODO  register normal/intruder
-                            break;
-                        case create:
-                            //TODO  create channel
-                            break;
-                        case show:
-                            //TODO  show channel
-                            break;
-                        case drop:
-                            //TODO  drop channel
-                            break;
-                        case intrude:
-                            //TODO  intrude channel
-                            break;
-                        case send:
-                            //TODO  send message
-                            break;
-                    }
-                } catch (Exception e){
-                    outputArea.setText(e.getMessage());
-                }
-            }
-        });
-
-        closeButton.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent actionEvent) {
-                System.out.println("[close] pressed");
-                System.exit(0);
-            }
-        });
-
-        hBox.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if(event.getCode() == KeyCode.F3){          //Debug-Mode
-                    String message;
-                    if(isDebugMode){
-                        isDebugMode = false;
-                        message = "Debug-Mode was disabled";
-                    } else {
-                        isDebugMode = true;
-                        message = "Debug-Mode was enabled";
-                    }
-                    outputArea.setText(message);
-                }
-                else if(event.getCode() == KeyCode.F8) {     //Print latest Logfile in Output
-                    try {
-                        File dir = new File("log");
-                        File[] files  = dir.listFiles();
-                        if(files != null) {
-                            Arrays.sort(files, new Comparator() {
-                                public int compare(Object o1, Object o2) {
-                                    return compare((File) o1, (File) o2);
-                                }
-                                private int compare(File f1, File f2) {
-                                    long result = f2.lastModified() - f1.lastModified();
-                                    if (result > 0) {
-                                        return 1;
-                                    } else if (result < 0) {
-                                        return -1;
-                                    } else {
-                                        return 0;
-                                    }
-                                }
-                            });
-                            File latestFile = files[0];
-                            BufferedReader reader = new BufferedReader(new FileReader(latestFile));
-                            StringBuilder stringBuilder = new StringBuilder();
-                            String line = null;
-                            String ls = System.getProperty("line.separator");
-                            stringBuilder.append("Latest Logfile: ").append(latestFile).append(ls).append("-------------------------------------").append(ls);
-                            while ((line = reader.readLine()) != null) {
-                                stringBuilder.append(line);
-                                stringBuilder.append(ls);
-                            }
-                            stringBuilder.deleteCharAt(stringBuilder.length() - 1);     // delete the last new line separator
-                            reader.close();
-
-                            outputArea.setText(stringBuilder.toString());
-                        } else {
-                            outputArea.setText("No Logfile found!");
+        executeButton.setOnAction(event -> {
+            System.out.println("[execute] pressed");
+            try{
+                Query query = new Query(commandLineArea.getText());
+                switch (query.getAction()){
+                    case encrypt:
+                    case decrypt:
+                        switch (query.getAlgorithm()){
+                            case Shift:
+                                //TODO shift encrypt/decrypt
+                            case RSA:
+                                //TODO rsa encrypt/decrypt
+                                break;
                         }
+                        break;
+                    case crack:
+                        //TODO  crack shift/rsa
+                        break;
+                    case register:
+                        //TODO  register normal/intruder
+                        break;
+                    case create:
+                        //TODO  create channel
+                        break;
+                    case show:
+                        //TODO  show channel
+                        break;
+                    case drop:
+                        //TODO  drop channel
+                        break;
+                    case intrude:
+                        //TODO  intrude channel
+                        break;
+                    case send:
+                        //TODO  send message
+                        break;
+                }
+            } catch (Exception e){
+                outputArea.setText(e.getMessage());
+            }
+        });
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
+        closeButton.setOnAction(actionEvent -> {
+            System.out.println("[close] pressed");
+            System.exit(0);
+        });
+
+        hBox.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.F3){          //Debug-Mode
+                String message;
+                if(isDebugMode){
+                    isDebugMode = false;
+                    message = "Debug-Mode was disabled";
+                } else {
+                    isDebugMode = true;
+                    message = "Debug-Mode was enabled";
+                }
+                outputArea.setText(message);
+            }
+            else if(event.getCode() == KeyCode.F8) {     //Print latest Logfile in Output
+                try {
+                    File dir = new File("log");
+                    File[] files  = dir.listFiles();
+                    if(files != null) {
+                        Arrays.sort(files, new Comparator() {
+                            public int compare(Object o1, Object o2) {
+                                return compare((File) o1, (File) o2);
+                            }
+                            private int compare(File f1, File f2) {
+                                long result = f2.lastModified() - f1.lastModified();
+                                if (result > 0) {
+                                    return 1;
+                                } else if (result < 0) {
+                                    return -1;
+                                } else {
+                                    return 0;
+                                }
+                            }
+                        });
+                        File latestFile = files[0];
+                        BufferedReader reader = new BufferedReader(new FileReader(latestFile));
+                        StringBuilder stringBuilder = new StringBuilder();
+                        String line;
+                        String ls = System.getProperty("line.separator");
+                        stringBuilder.append("Latest Logfile: ").append(latestFile).append(ls).append("-------------------------------------").append(ls);
+                        while ((line = reader.readLine()) != null) {
+                            stringBuilder.append(line);
+                            stringBuilder.append(ls);
+                        }
+                        stringBuilder.deleteCharAt(stringBuilder.length() - 1);     // delete the last new line separator
+                        reader.close();
+
+                        outputArea.setText(stringBuilder.toString());
+                    } else {
+                        outputArea.setText("No Logfile found!");
                     }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -169,7 +158,7 @@ public class GUI extends Application {
         String fileName = "kryptoLogFile" + timeStamp.toInstant() + ".txt";
 
         File directory = new File(directoryName);
-        if (! directory.exists())
+        if (!directory.exists())
             directory.mkdir();
 
         File file = new File(directoryName + "/" + fileName);
