@@ -1,6 +1,8 @@
 package hsqldb;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import enums.Type;
 
@@ -130,6 +132,38 @@ public enum HSQLDB {
 
         update(insertParticipants.toString());
     }
+    public void registerParticipant(String name, Type type) throws Exception{
+        try {
+            Statement selectStatement = connection.createStatement();
+            ResultSet resultSet = selectStatement.executeQuery("SELECT * FROM participants WHERE name = '" + name + "';");
+            if(!resultSet.next()){
+                String insert = "INSERT INTO participants(id, name, type_id) VALUES (10, '" + name + "', '";    //TODO ids müssen noch iwie mit auto inkrement gemacht werden
+                if(type == Type.normal)
+                    insert += "1";
+                else if (type == Type.intruder)
+                    insert += "2";
+                insert += "')";
+                update(insert);
+            } else {
+                throw new Exception("Participant-Name already exists");
+            }
+            selectStatement.close();
+        } catch (SQLException sqle) {
+            System.out.println(sqle.getMessage());
+        }
+    }
+    public List<String> showParticipants(){
+        List<String> result = new ArrayList<>();
+        try {
+            Statement selectStatement = connection.createStatement();
+            ResultSet resultSet = selectStatement.executeQuery("SELECT p.name AS p_name, t.name AS p_type FROM participants p INNER JOIN types t ON p.type_id = t.id;");
+            while (resultSet.next())
+                result.add(resultSet.getString("p_name") + "\t\t" + resultSet.getString("p_type"));
+        } catch (SQLException sqle){
+            System.out.println(sqle.getMessage());
+        }
+        return result;
+    }
 
     /*
        [channel]
@@ -251,6 +285,8 @@ public enum HSQLDB {
         System.out.println("sqlStringBuilder : " + sqlStringBuilder02.toString());
         update(sqlStringBuilder02.toString());
     }
+
+
 
     public void shutdown() {
         System.out.println("--- shutdown");
