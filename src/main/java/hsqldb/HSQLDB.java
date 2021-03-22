@@ -53,7 +53,7 @@ public enum HSQLDB {
         System.out.println("sqlStringBuilder : " + sqlStringBuilder02.toString());
         update(sqlStringBuilder02.toString());
 
-        String insertAlgorithm = "INSERT INTO types (id, name) VALUES ('1', 'shift'), ('2', 'rsa');";
+        String insertAlgorithm = "INSERT INTO algorithms (id, name) VALUES ('1', 'shift'), ('2', 'rsa');";
         System.out.println("insertAlgorithm : " + insertAlgorithm);
         update(insertAlgorithm);
     }
@@ -119,7 +119,7 @@ public enum HSQLDB {
         update(sqlStringBuilder03.toString());
 
         StringBuilder insertParticipants = new StringBuilder();
-        insertParticipants.append("INSERT INTO types (id, name, type_id)");
+        insertParticipants.append("INSERT INTO participants (id, name, type_id)");
         insertParticipants.append("VALUES ('1', 'branch_hkg', '1'),");
         insertParticipants.append("('2', 'branch_cpt', '1'),");
         insertParticipants.append("('3', 'branch_sfo', '1'),");
