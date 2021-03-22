@@ -53,8 +53,9 @@ public enum HSQLDB {
         System.out.println("sqlStringBuilder : " + sqlStringBuilder02.toString());
         update(sqlStringBuilder02.toString());
 
-        String insertType = "INSERT INTO types (id, name) VALUES ('0', 'shift'), ('1', 'rsa');";
-        update(insertType);
+        String insertAlgorithm = "INSERT INTO types (id, name) VALUES ('1', 'shift'), ('2', 'rsa');";
+        System.out.println("insertAlgorithm : " + insertAlgorithm);
+        update(insertAlgorithm);
     }
 
     /*
@@ -79,7 +80,8 @@ public enum HSQLDB {
         System.out.println("sqlStringBuilder : " + sqlStringBuilder02.toString());
         update(sqlStringBuilder02.toString());
 
-        String insertType = "INSERT INTO types (id, name) VALUES ('0', 'normal'), ('1', 'intruder');";
+        String insertType = "INSERT INTO types (id, name) VALUES ('1', 'normal'), ('2', 'intruder');";
+        System.out.println("insertType : " + insertType);
         update(insertType);
     }
 
@@ -115,6 +117,18 @@ public enum HSQLDB {
         System.out.println("sqlStringBuilder : " + sqlStringBuilder03.toString());
 
         update(sqlStringBuilder03.toString());
+
+        StringBuilder insertParticipants = new StringBuilder();
+        insertParticipants.append("INSERT INTO types (id, name, type_id)");
+        insertParticipants.append("VALUES ('1', 'branch_hkg', '1'),");
+        insertParticipants.append("('2', 'branch_cpt', '1'),");
+        insertParticipants.append("('3', 'branch_sfo', '1'),");
+        insertParticipants.append("('4', 'branch_syd', '1'),");
+        insertParticipants.append("('5', 'branch_wuh', '1'),");
+        insertParticipants.append("('6', 'msa', '2');");
+        System.out.println("insertParticipants : " + insertParticipants.toString());
+
+        update(insertParticipants.toString());
     }
 
     /*
