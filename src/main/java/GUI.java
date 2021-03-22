@@ -11,10 +11,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 
 public class GUI extends Application {
@@ -108,8 +107,47 @@ public class GUI extends Application {
                     }
                     outputArea.setText(message);
                 }
-                else if(event.getCode() == KeyCode.F8){     //Print last Logfile in Output
+                else if(event.getCode() == KeyCode.F8) {     //Print latest Logfile in Output
+                    try {
+                        File dir = new File("log");
+                        File[] files  = dir.listFiles();
+                        if(files != null) {
+                            Arrays.sort(files, new Comparator() {
+                                public int compare(Object o1, Object o2) {
+                                    return compare((File) o1, (File) o2);
+                                }
+                                private int compare(File f1, File f2) {
+                                    long result = f2.lastModified() - f1.lastModified();
+                                    if (result > 0) {
+                                        return 1;
+                                    } else if (result < 0) {
+                                        return -1;
+                                    } else {
+                                        return 0;
+                                    }
+                                }
+                            });
+                            File latestFile = files[0];
+                            BufferedReader reader = new BufferedReader(new FileReader(latestFile));
+                            StringBuilder stringBuilder = new StringBuilder();
+                            String line = null;
+                            String ls = System.getProperty("line.separator");
+                            stringBuilder.append("Latest Logfile: ").append(latestFile).append(ls).append("-------------------------------------").append(ls);
+                            while ((line = reader.readLine()) != null) {
+                                stringBuilder.append(line);
+                                stringBuilder.append(ls);
+                            }
+                            stringBuilder.deleteCharAt(stringBuilder.length() - 1);     // delete the last new line separator
+                            reader.close();
 
+                            outputArea.setText(stringBuilder.toString());
+                        } else {
+                            outputArea.setText("No Logfile found!");
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -143,7 +181,6 @@ public class GUI extends Application {
         }
         catch (IOException e){
             e.printStackTrace();
-            System.exit(-1);
         }
     }
 }
