@@ -13,12 +13,16 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 
+import hsqldb.HSQLDB;
+
 public class GUI extends Application {
 
     private boolean isDebugMode = false;
 
     public void start(Stage primaryStage) {
         primaryStage.setTitle("MSA | Mergentheim/Mosbach Security Agency");
+
+        HSQLDB.instance.setupDatabase();
 
         HBox hBox = new HBox();
         hBox.setPadding(new Insets(15, 12, 15, 12));
@@ -82,6 +86,7 @@ public class GUI extends Application {
 
         closeButton.setOnAction(actionEvent -> {
             System.out.println("[close] pressed");
+            HSQLDB.instance.shutdown();
             System.exit(0);
         });
 
