@@ -107,4 +107,26 @@ public class GUI extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
+    public void createLogFile(String value){
+        String directoryName = "log";
+        Date timeStamp = new Date();
+        String fileName = "kryptoLogFile" + timeStamp.toInstant() + ".txt";
+
+        File directory = new File(directoryName);
+        if (! directory.exists())
+            directory.mkdir();
+
+        File file = new File(directoryName + "/" + fileName);
+        try{
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(value);
+            bw.close();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+            System.exit(-1);
+        }
+    }
 }
