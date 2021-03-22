@@ -1,9 +1,8 @@
 package hsqldb;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+
+import enums.Type;
 
 public enum HSQLDB {
     instance;
@@ -76,6 +75,9 @@ public enum HSQLDB {
         sqlStringBuilder02.append("CREATE UNIQUE INDEX IF NOT EXISTS idx_types ON types (name)");
         System.out.println("sqlStringBuilder : " + sqlStringBuilder02.toString());
         update(sqlStringBuilder02.toString());
+
+        String insertType = "INSERT INTO types (id, name) VALUES ('0', 'normal'), ('1', 'intruder');";
+        update(insertType);
     }
 
     /*
