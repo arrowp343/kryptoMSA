@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.util.Date;
 
 public class GUI extends Application {
+
+    private boolean isDebugMode = false;
+
     public void start(Stage primaryStage) {
         primaryStage.setTitle("MSA | Mergentheim/Mosbach Security Agency");
 
@@ -95,7 +98,15 @@ public class GUI extends Application {
             @Override
             public void handle(KeyEvent event) {
                 if(event.getCode() == KeyCode.F3){          //Debug-Mode
-
+                    String message;
+                    if(isDebugMode){
+                        isDebugMode = false;
+                        message = "Debug-Mode was disabled";
+                    } else {
+                        isDebugMode = true;
+                        message = "Debug-Mode was enabled";
+                    }
+                    outputArea.setText(message);
                 }
                 else if(event.getCode() == KeyCode.F8){     //Print last Logfile in Output
 
