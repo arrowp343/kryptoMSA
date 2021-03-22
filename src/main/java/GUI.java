@@ -1,4 +1,3 @@
-import enums.Action;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -6,6 +5,8 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -81,6 +82,18 @@ public class GUI extends Application {
             public void handle(ActionEvent actionEvent) {
                 System.out.println("[close] pressed");
                 System.exit(0);
+            }
+        });
+
+        hBox.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode() == KeyCode.F3){          //Debug-Mode
+
+                }
+                else if(event.getCode() == KeyCode.F8){     //Print last Logfile in Output
+
+                }
             }
         });
 
