@@ -65,7 +65,8 @@ public class GUI extends Application {
                         outputArea.setText(query.getOutput());
                         break;
                     case create:
-                        //TODO  create channel
+                        HSQLDB.instance.createChannel(query.getName(), query.getParticipant01(), query.getParticipant02());
+                        outputArea.setText(query.getOutput());
                         break;
                     case show:
                         outputArea.setText(query.getOutput());

@@ -135,11 +135,10 @@ public enum HSQLDB {
         try {
             Statement selectStatement = connection.createStatement();
             ResultSet resultSet = selectStatement.executeQuery("SELECT * FROM participants WHERE name = '" + name + "';");
-
-            if(!resultSet.next()){
+            if(resultSet.next()) throw new Exception("participant " + name + " already exists, using existing postbox_" + name);
+            else{
                 Statement selectLatestId = connection.createStatement();
                 ResultSet latestId = selectLatestId.executeQuery("SELECT id FROM participants ORDER BY id DESC;");
-
                 int nextId = latestId.next() ? Integer.parseInt(latestId.getString("id")) : 1;
                 nextId++;
                 String insert = "INSERT INTO participants(id, name, type_id) VALUES (" + nextId + ", '" + name + "', '";
@@ -151,8 +150,6 @@ public enum HSQLDB {
                 insert += "')";
                 update(insert);
                 createTablePostbox(name);
-            } else {
-                throw new Exception("participant " + name + " already exists, using existing postbox_" + name);
             }
             selectStatement.close();
         } catch (SQLException sqle) {
@@ -170,6 +167,13 @@ public enum HSQLDB {
             System.out.println(sqle.getMessage());
         }
         return result;
+    }
+    public Type getTypeOfParticipant(String name){
+        //TODO get type of participant;
+
+        //if participant doesnt exist, return null
+        //else return type
+        return null;
     }
 
     /*
@@ -206,6 +210,27 @@ public enum HSQLDB {
         sqlStringBuilder03.append("ON DELETE CASCADE");
         System.out.println("sqlStringBuilder : " + sqlStringBuilder03.toString());
         update(sqlStringBuilder03.toString());
+    }
+    public void createChannel(String name, String participant01, String participant02) throws Exception{
+        if(participant01.equals(participant02)) throw new Exception(participant01 + " and " + participant02 + " are identical - cannot create channel on itself");
+
+        Statement selectStatement = connection.createStatement();
+        ResultSet resultSet = selectStatement.executeQuery("SELECT * FROM channel WHERE name = '" + name + "';");
+        if(resultSet.next()) throw new Exception("channel " + name + " already exists");
+
+        if(channelAlreadyExists(participant01, participant02)) throw new Exception("communication channel between " + participant01 + " and " + participant02 + " already exists");
+
+        if(getTypeOfParticipant(participant01) == null) throw new Exception("Participant " + participant01 + " does not exist");
+        if(getTypeOfParticipant(participant02) == null) throw new Exception("Participant " + participant02 + " does not exist");
+
+        if(getTypeOfParticipant(participant01) != Type.normal) throw new Exception("Participant " + participant01 + " must be from type normal");
+        if(getTypeOfParticipant(participant02) != Type.normal) throw new Exception("Participant " + participant02 + " must be from type normal");
+
+        //TODO insert channel
+    }
+    public boolean channelAlreadyExists(String participant01, String participant02){
+        //TODO check if connection between p1 and p2 already exists
+        return false;
     }
 
     /*

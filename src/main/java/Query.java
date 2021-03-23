@@ -91,6 +91,7 @@ public class Query {
                 participant01 = commandPart[4];
                 expect(commandPart[5], "to");
                 participant02 = commandPart[6];
+                output = "channel " + name + " from " + participant01 + " to " + participant02 + " successfully created";
             }
             case "show" -> {
                 action = Action.show;
