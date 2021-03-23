@@ -120,24 +120,29 @@ public enum HSQLDB {
 
         update(sqlStringBuilder03.toString());
 
-        StringBuilder insertParticipants = new StringBuilder();
-        insertParticipants.append("INSERT INTO participants (id, name, type_id)");
-        insertParticipants.append("VALUES ('1', 'branch_hkg', '1'),");
-        insertParticipants.append("('2', 'branch_cpt', '1'),");
-        insertParticipants.append("('3', 'branch_sfo', '1'),");
-        insertParticipants.append("('4', 'branch_syd', '1'),");
-        insertParticipants.append("('5', 'branch_wuh', '1'),");
-        insertParticipants.append("('6', 'msa', '2');");
-        System.out.println("insertParticipants : " + insertParticipants.toString());
-
-        update(insertParticipants.toString());
+        try {
+            registerParticipant("branch_hkg", Type.normal);
+            registerParticipant("branch_cpt", Type.normal);
+            registerParticipant("branch_sfo", Type.normal);
+            registerParticipant("branch_syd", Type.normal);
+            registerParticipant("branch_wuh", Type.normal);
+            registerParticipant("msa", Type.intruder);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
     public void registerParticipant(String name, Type type) throws Exception{
         try {
             Statement selectStatement = connection.createStatement();
             ResultSet resultSet = selectStatement.executeQuery("SELECT * FROM participants WHERE name = '" + name + "';");
+
             if(!resultSet.next()){
-                String insert = "INSERT INTO participants(id, name, type_id) VALUES (10, '" + name + "', '";    //TODO ids müssen noch iwie mit auto inkrement gemacht werden
+                Statement selectLatestId = connection.createStatement();
+                ResultSet latestId = selectLatestId.executeQuery("SELECT id FROM participants ORDER BY id DESC;");
+
+                int nextId = latestId.next() ? Integer.parseInt(latestId.getString("id")) : 1;
+                nextId++;
+                String insert = "INSERT INTO participants(id, name, type_id) VALUES (" + nextId + ", '" + name + "', '";
                 if(type == Type.normal)
                     insert += "1";
                 else if (type == Type.intruder)
@@ -151,6 +156,7 @@ public enum HSQLDB {
         } catch (SQLException sqle) {
             System.out.println(sqle.getMessage());
         }
+        //TODO tabelle postbox erstellen
     }
     public List<String> showParticipants(){
         List<String> result = new ArrayList<>();

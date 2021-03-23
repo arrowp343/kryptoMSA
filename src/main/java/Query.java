@@ -1,6 +1,9 @@
 import enums.Action;
 import enums.Algorithm;
 import enums.Type;
+import hsqldb.HSQLDB;
+
+import java.util.List;
 
 public class Query {
     Action action;

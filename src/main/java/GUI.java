@@ -134,7 +134,7 @@ public class GUI extends Application {
                             stringBuilder.append(line);
                             stringBuilder.append(ls);
                         }
-                        stringBuilder.deleteCharAt(stringBuilder.length() - 1);     // delete the last new line separator
+                        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
                         reader.close();
 
                         outputArea.setText(stringBuilder.toString());
