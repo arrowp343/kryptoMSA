@@ -61,12 +61,14 @@ public class GUI extends Application {
                         //TODO  crack shift/rsa
                         break;
                     case register:
-                        //TODO  register normal/intruder
+                        HSQLDB.instance.registerParticipant(query.getName(), query.getType());
+                        outputArea.setText(query.getOutput());
                         break;
                     case create:
                         //TODO  create channel
                         break;
                     case show:
+                        outputArea.setText(query.getOutput());
                         //TODO  show channel
                         break;
                     case drop:

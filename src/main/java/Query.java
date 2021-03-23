@@ -11,6 +11,7 @@ public class Query {
     String name;
     Type type;
     String participant01, participant02;
+    String output;
 
     public Query(String query) throws Exception{
 
@@ -77,6 +78,7 @@ public class Query {
                     case "intruder" -> type = Type.intruder;
                     default -> throw new Exception("unknown Type '" + commandPart[5] + "' - choose between normal and intruder");
                 }
+                output = "Participant Registration Successful";
             }
             case "create" -> {
                 action = Action.create;
@@ -89,7 +91,21 @@ public class Query {
             }
             case "show" -> {
                 action = Action.show;
-                expect(commandPart[1], "channel");
+                switch (commandPart[1]){
+                    case "participant":
+                        List<String> participants = HSQLDB.instance.showParticipants();
+                        StringBuilder outputParticipants = new StringBuilder();
+                        participants.forEach(participant -> outputParticipants.append(participant).append(System.getProperty("line.separator")));
+                        outputParticipants.deleteCharAt(outputParticipants.length() - 1);
+                        output = outputParticipants.toString();
+                        break;
+                    case "channel":
+                        //TODO show channel
+                        break;
+                    default:
+                        output = "Syntax-Error at '" + commandPart[1] + "' - expected participant or channel";
+                        break;
+                }
             }
             case "drop" -> {
                 action = Action.drop;
@@ -150,4 +166,5 @@ public class Query {
     public Type getType() { return type; }
     public String getParticipant01() { return participant01; }
     public String getParticipant02() { return participant02; }
+    public String getOutput() { return output; }
 }
