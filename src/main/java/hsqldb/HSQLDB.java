@@ -169,10 +169,19 @@ public enum HSQLDB {
         return result;
     }
     public Type getTypeOfParticipant(String name){
-        //TODO get type of participant;
-
-        //if participant doesnt exist, return null
-        //else return type
+        try {
+            Statement selectParticipantType = connection.createStatement();
+            ResultSet participantType = selectParticipantType.executeQuery("SELECT type_id FROM participants WHERE name = '" + name + "';");
+            if(participantType.next()) {
+                int type = participantType.getInt("type_id");
+                if(type == 1)
+                    return Type.normal;
+                else if(type == 2)
+                    return Type.intruder;
+            }
+        } catch (Exception e){
+            return null;
+        }
         return null;
     }
 

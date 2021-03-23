@@ -2,6 +2,7 @@ import enums.Type;
 import hsqldb.HSQLDB;
 import org.junit.jupiter.api.Test;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,6 +38,22 @@ public class TestHSQLDB {
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
+        HSQLDB.instance.shutdown();
+    }
+
+    @Test
+    public void testGetTypeOfParticipant(){
+        HSQLDB.instance.setupDatabase();
+        Type expect = Type.intruder, actual = null;
+        String testName = new Date().toString();
+        try {
+            HSQLDB.instance.registerParticipant(testName, expect);
+            actual = HSQLDB.instance.getTypeOfParticipant(testName);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        assertNotNull(actual);
+        assertEquals(expect, actual);
         HSQLDB.instance.shutdown();
     }
 }
