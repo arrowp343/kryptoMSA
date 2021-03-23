@@ -143,20 +143,21 @@ public enum HSQLDB {
                 int nextId = latestId.next() ? Integer.parseInt(latestId.getString("id")) : 1;
                 nextId++;
                 String insert = "INSERT INTO participants(id, name, type_id) VALUES (" + nextId + ", '" + name + "', '";
+                System.out.println("Register new Participant: " + insert);
                 if(type == Type.normal)
                     insert += "1";
                 else if (type == Type.intruder)
                     insert += "2";
                 insert += "')";
                 update(insert);
+                createTablePostbox(name);
             } else {
-                throw new Exception("Participant-Name already exists");
+                throw new Exception("participant " + name + " already exists, using existing postbox_" + name);
             }
             selectStatement.close();
         } catch (SQLException sqle) {
             System.out.println(sqle.getMessage());
         }
-        //TODO tabelle postbox erstellen
     }
     public List<String> showParticipants(){
         List<String> result = new ArrayList<>();

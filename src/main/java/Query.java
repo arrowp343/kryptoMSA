@@ -81,7 +81,7 @@ public class Query {
                     case "intruder" -> type = Type.intruder;
                     default -> throw new Exception("unknown Type '" + commandPart[5] + "' - choose between normal and intruder");
                 }
-                output = "Participant Registration Successful";
+                output = "participant " + name + "with type " + commandPart[5] + " registered and postbox_" + name + " created";
             }
             case "create" -> {
                 action = Action.create;
