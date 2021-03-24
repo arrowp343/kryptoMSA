@@ -375,8 +375,6 @@ public enum HSQLDB {
         update(sqlStringBuilder02.toString());
     }
 
-
-
     public void shutdown() {
         System.out.println("--- shutdown");
 

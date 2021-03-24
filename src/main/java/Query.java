@@ -1,9 +1,4 @@
-import enums.Action;
-import enums.Algorithm;
-import enums.Type;
-import hsqldb.HSQLDB;
-
-import java.util.List;
+import enums.*;
 
 public class Query {
     private Action action;
@@ -12,6 +7,7 @@ public class Query {
     private int key;
     private String keyFile;
     private String name;
+    private Show show;
     private Type type;
     private String participant01, participant02;
     private String output;
@@ -95,21 +91,11 @@ public class Query {
             }
             case "show" -> {
                 action = Action.show;
-                List<String> result;
-                switch (commandPart[1]){
-                    case "participant":
-                        result = HSQLDB.instance.showParticipants();
-                        break;
-                    case "channel":
-                        result = HSQLDB.instance.showChannel();
-                        break;
-                    default:
-                        throw new Exception("Syntax-Error at '" + commandPart[1] + "' - expected participant or channel");
+                switch (commandPart[1]) {
+                    case "participant" -> show = Show.participant;
+                    case "channel" -> show = Show.channel;
+                    default -> throw new Exception("Syntax-Error at '" + commandPart[1] + "' - expected participant or channel");
                 }
-                StringBuilder outputParticipants = new StringBuilder();
-                result.forEach(r -> outputParticipants.append(r).append(System.getProperty("line.separator")));
-                outputParticipants.deleteCharAt(outputParticipants.length() - 1);
-                output = outputParticipants.toString();
             }
             case "drop" -> {
                 action = Action.drop;
@@ -161,13 +147,13 @@ public class Query {
         return action;
     }
     public String getMessage() { return message; }
-
     public Algorithm getAlgorithm(){
         return algorithm;
     }
     public int getKey() { return key; }
     public String getKeyFile() { return keyFile; }
     public String getName() { return name; }
+    public Show getShow() { return show; }
     public Type getType() { return type; }
     public String getParticipant01() { return participant01; }
     public String getParticipant02() { return participant02; }

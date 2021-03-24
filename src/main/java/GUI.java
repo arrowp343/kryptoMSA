@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 import hsqldb.HSQLDB;
 
@@ -69,7 +70,15 @@ public class GUI extends Application {
                         outputArea.setText(query.getOutput());
                         break;
                     case show:
-                        outputArea.setText(query.getOutput());
+                        List<String> result = switch (query.getShow()) {
+                            case participant -> HSQLDB.instance.showParticipants();
+                            case channel -> HSQLDB.instance.showChannel();
+                            default -> throw new Exception("Error at Enum Show");
+                        };
+                        StringBuilder outputParticipants = new StringBuilder();
+                        result.forEach(r -> outputParticipants.append(r).append(System.getProperty("line.separator")));
+                        outputParticipants.deleteCharAt(outputParticipants.length() - 1);
+                        outputArea.setText(outputParticipants.toString());
                         break;
                     case drop:
                         HSQLDB.instance.dropChannel(query.getName());
