@@ -1,3 +1,4 @@
+import enums.Algorithm;
 import enums.Type;
 import hsqldb.HSQLDB;
 import org.junit.jupiter.api.Test;
@@ -58,14 +59,32 @@ public class TestHSQLDB {
     public void testConnectionAlreadyExists(){
         HSQLDB.instance.setupDatabase();
         try{
-            assertTrue(HSQLDB.instance.connectionAlreadyExists("branch_hkg", "branch_wuh"));
-            assertTrue(HSQLDB.instance.connectionAlreadyExists("branch_hkg", "branch_cpt"));
-            assertTrue(HSQLDB.instance.connectionAlreadyExists("branch_cpt", "branch_syd"));
-            assertTrue(HSQLDB.instance.connectionAlreadyExists("branch_syd", "branch_sfo"));
-            assertFalse(HSQLDB.instance.connectionAlreadyExists("branch_hkg", "branch_syd"));
+            assertTrue(HSQLDB.instance.doesChannelExist("branch_hkg", "branch_wuh"));
+            assertTrue(HSQLDB.instance.doesChannelExist("branch_hkg", "branch_cpt"));
+            assertTrue(HSQLDB.instance.doesChannelExist("branch_cpt", "branch_syd"));
+            assertTrue(HSQLDB.instance.doesChannelExist("branch_syd", "branch_sfo"));
+            assertFalse(HSQLDB.instance.doesChannelExist("branch_hkg", "branch_syd"));
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
         HSQLDB.instance.shutdown();
+    }
+    @Test
+    public void testInsertMessage(){
+        HSQLDB.instance.setupDatabase();
+        String testP1 = "TestP1" + new Date().getTime();
+        String testP2 = "TestP2" + new Date().getTime();
+        String testChannel = "TestCh" + new Date().getTime();
+        boolean err = false;
+        try {
+            HSQLDB.instance.registerParticipant(testP1, Type.normal);
+            HSQLDB.instance.registerParticipant(testP2, Type.normal);
+            HSQLDB.instance.createChannel(testChannel, testP1, testP2);
+            HSQLDB.instance.insertMessage(testP1, testP2, "HalloWelt", "Verschlüsselt", Algorithm.Shift, "keyfile.txt");
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            err = true;
+        }
+        assertFalse(err);
     }
 }

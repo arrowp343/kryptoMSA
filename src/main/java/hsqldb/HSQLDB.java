@@ -2,8 +2,10 @@ package hsqldb;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import enums.Algorithm;
 import enums.Type;
 
 public enum HSQLDB {
@@ -55,7 +57,7 @@ public enum HSQLDB {
         System.out.println("sqlStringBuilder : " + sqlStringBuilder02.toString());
         update(sqlStringBuilder02.toString());
 
-        String insertAlgorithm = "INSERT INTO algorithms (id, name) VALUES ('1', 'shift'), ('2', 'rsa');";
+        String insertAlgorithm = "INSERT INTO algorithms (id, name) VALUES ('1', 'Shift'), ('2', 'RSA');";
         System.out.println("insertAlgorithm : " + insertAlgorithm);
         update(insertAlgorithm);
     }
@@ -236,7 +238,7 @@ public enum HSQLDB {
         ResultSet resultSet = selectStatement.executeQuery("SELECT * FROM channel WHERE name = '" + name + "';");
         if(resultSet.next()) throw new Exception("channel " + name + " already exists");
 
-        if(connectionAlreadyExists(participant01, participant02)) throw new Exception("communication channel between " + participant01 + " and " + participant02 + " already exists");
+        if(doesChannelExist(participant01, participant02)) throw new Exception("communication channel between " + participant01 + " and " + participant02 + " already exists");
 
         if(getTypeOfParticipant(participant01) == null) throw new Exception("Participant " + participant01 + " does not exist");
         if(getTypeOfParticipant(participant02) == null) throw new Exception("Participant " + participant02 + " does not exist");
@@ -276,7 +278,7 @@ public enum HSQLDB {
         Statement deleteStatement = connection.createStatement();
         deleteStatement.execute("DELETE FROM channel WHERE name = '" + name + "';");
     }
-    public boolean connectionAlreadyExists(String participant01, String participant02) throws Exception{
+    public boolean doesChannelExist(String participant01, String participant02) throws Exception{
         Statement selectStatement = connection.createStatement();
         String sql = "SELECT p1.name, p2.name " +
                 "FROM (channel c INNER JOIN participants p1 ON c.participant_01 = p1.id) " +
@@ -340,7 +342,43 @@ public enum HSQLDB {
         System.out.println("sqlStringBuilder : " + sqlStringBuilder04.toString());
         update(sqlStringBuilder04.toString());
     }
+    public void insertMessage(String participantFrom, String participantTo, String plainMessage, String encryptedMessage, Algorithm algorithm, String keyfile) throws Exception{
+        if(doesChannelExist(participantFrom, participantTo)){
+            Statement selectLatestId = connection.createStatement();
+            ResultSet latestId = selectLatestId.executeQuery("SELECT id FROM messages ORDER BY id DESC;");
+            int nextId = latestId.next() ? Integer.parseInt(latestId.getString("id")) : 1;
+            nextId++;
+            int pFrom, pTo, algoId;
 
+            Statement selectStatement = connection.createStatement();
+            ResultSet resultSet = selectStatement.executeQuery("SELECT id FROM participants WHERE name = '" + participantFrom + "';");
+            if(resultSet.next()) pFrom = resultSet.getInt("id");
+            else throw new Exception("participant_from id wasn't found");
+
+            resultSet = selectStatement.executeQuery("SELECT id FROM participants WHERE name = '" + participantTo + "';");
+            if(resultSet.next()) pTo = resultSet.getInt("id");
+            else throw new Exception("participant_to id wasn't found");
+
+            resultSet = selectStatement.executeQuery("SELECT id FROM algorithms WHERE name = '" + algorithm.toString() + "';");
+            if(resultSet.next()) algoId = resultSet.getInt("id");
+            else throw new Exception("algorithm_id '"+algorithm.toString()+"'wasn't found");
+
+            long time = new Date().getTime();
+
+            StringBuilder sql = new StringBuilder();
+            sql.append("INSERT INTO messages (id, participant_from_id, participant_to_id, plain_message, algorithm_id, encrypted_message, keyfile, timestamp) VALUES (");
+            sql.append(nextId).append(", ");
+            sql.append(pFrom).append(", ");
+            sql.append(pTo).append(", '");
+            sql.append(plainMessage).append("', ");
+            sql.append(algoId).append(", '");
+            sql.append(encryptedMessage).append("', '");
+            sql.append(keyfile).append("', ");
+            sql.append(time).append(");");
+            System.out.println(sql.toString());
+            update(sql.toString());
+        }
+    }
     /*
        [postbox_[participant_name]]
        id                  TINYINT NOT NULL
