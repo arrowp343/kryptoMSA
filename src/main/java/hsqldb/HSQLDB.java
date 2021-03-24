@@ -342,8 +342,16 @@ public enum HSQLDB {
         System.out.println("sqlStringBuilder : " + sqlStringBuilder04.toString());
         update(sqlStringBuilder04.toString());
     }
-    public void insertMessage(String participantFrom, String participantTo, String plainMessage, String encryptedMessage, Algorithm algorithm, String keyfile) throws Exception{
-        if(doesChannelExist(participantFrom, participantTo)){
+    public void sendMessage(String participantFrom, String participantTo, String plainMessage, String encryptedMessage, Algorithm algorithm, String keyfile) throws Exception{
+        if(!doesChannelExist(participantFrom, participantTo)) throw new Exception("no valid channel from " + participantFrom + " to " + participantTo);
+        else {
+            //TODO insert in postbox
+
+            //TODO insert in postbox of intruder
+
+            //TODO Eventbus irgendsowas
+
+            //protocol in table message
             Statement selectLatestId = connection.createStatement();
             ResultSet latestId = selectLatestId.executeQuery("SELECT id FROM messages ORDER BY id DESC;");
             int nextId = latestId.next() ? Integer.parseInt(latestId.getString("id")) : 1;

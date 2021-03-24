@@ -88,7 +88,8 @@ public class GUI extends Application {
                         //TODO  intrude channel
                         break;
                     case send:
-                        //TODO  send message
+                        String encryptedMessage = query.getMessage();   //TODO nachricht verschlüsseln
+                        HSQLDB.instance.sendMessage(query.getParticipant01(), query.getParticipant02(), query.getMessage(), encryptedMessage, query.getAlgorithm(), query.getKeyFile());
                         break;
                 }
             } catch (Exception e){

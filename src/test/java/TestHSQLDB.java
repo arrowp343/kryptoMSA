@@ -80,7 +80,7 @@ public class TestHSQLDB {
             HSQLDB.instance.registerParticipant(testP1, Type.normal);
             HSQLDB.instance.registerParticipant(testP2, Type.normal);
             HSQLDB.instance.createChannel(testChannel, testP1, testP2);
-            HSQLDB.instance.insertMessage(testP1, testP2, "HalloWelt", "Verschlüsselt", Algorithm.Shift, "keyfile.txt");
+            HSQLDB.instance.sendMessage(testP1, testP2, "HalloWelt", "Verschlüsselt", Algorithm.Shift, "keyfile.txt");
         } catch (Exception e){
             System.out.println(e.getMessage());
             err = true;
