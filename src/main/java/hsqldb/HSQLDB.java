@@ -219,6 +219,15 @@ public enum HSQLDB {
         sqlStringBuilder03.append("ON DELETE CASCADE");
         System.out.println("sqlStringBuilder : " + sqlStringBuilder03.toString());
         update(sqlStringBuilder03.toString());
+        try {
+            createChannel("hkg_wuh", "branch_hkg", "branch_wuh");
+            createChannel("hkg_cpt", "branch_hkg", "branch_cpt");
+            createChannel("cpt_syd", "branch_cpt", "branch_syd");
+            createChannel("syd_sfo", "branch_syd", "branch_sfo");
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
     public void createChannel(String name, String participant01, String participant02) throws Exception{
         if(participant01.equals(participant02)) throw new Exception(participant01 + " and " + participant02 + " are identical - cannot create channel on itself");
@@ -227,7 +236,7 @@ public enum HSQLDB {
         ResultSet resultSet = selectStatement.executeQuery("SELECT * FROM channel WHERE name = '" + name + "';");
         if(resultSet.next()) throw new Exception("channel " + name + " already exists");
 
-        if(channelAlreadyExists(participant01, participant02)) throw new Exception("communication channel between " + participant01 + " and " + participant02 + " already exists");
+        if(connectionAlreadyExists(participant01, participant02)) throw new Exception("communication channel between " + participant01 + " and " + participant02 + " already exists");
 
         if(getTypeOfParticipant(participant01) == null) throw new Exception("Participant " + participant01 + " does not exist");
         if(getTypeOfParticipant(participant02) == null) throw new Exception("Participant " + participant02 + " does not exist");
@@ -235,10 +244,46 @@ public enum HSQLDB {
         if(getTypeOfParticipant(participant01) != Type.normal) throw new Exception("Participant " + participant01 + " must be from type normal");
         if(getTypeOfParticipant(participant02) != Type.normal) throw new Exception("Participant " + participant02 + " must be from type normal");
 
-        //TODO insert channel
+        int p1_id = 0, p2_id = 0;
+        Statement getParticipantId = connection.createStatement();
+        ResultSet p1 = getParticipantId.executeQuery("SELECT id FROM participants WHERE name = '" + participant01 + "';");
+        if(p1.next()) p1_id = p1.getInt("id");
+        else throw new Exception("Participant " + participant01 + " does not exist");
+        ResultSet p2 = getParticipantId.executeQuery("SELECT id FROM participants WHERE name = '" + participant02 + "';");
+        if(p2.next()) p2_id = p2.getInt("id");
+        else throw new Exception("Participant " + participant02 + " does not exist");
+
+        Statement insertConnection = connection.createStatement();
+        insertConnection.execute("INSERT INTO channel (name, participant_01, participant_02) VALUES ('" + name + "', " + p1_id + ", " + p2_id + ")");
     }
-    public boolean channelAlreadyExists(String participant01, String participant02){
-        //TODO check if connection between p1 and p2 already exists
+    public List<String> showChannel(){
+        List<String> result = new ArrayList<>();
+        try {
+            Statement selectStatement = connection.createStatement();
+            StringBuilder sql = new StringBuilder();
+            sql.append("SELECT c.name AS channelName, p1.name AS part01Name, p2.name AS part02Name ");
+            sql.append("FROM (channel c INNER JOIN participants p1 ON c.participant_01 = p1.id) ");
+            sql.append("INNER JOIN participants p2 ON c.participant_02 = p2.id;");
+            ResultSet resultSet = selectStatement.executeQuery(sql.toString());
+            while (resultSet.next()){
+                result.add(resultSet.getString("channelName") + " | " + resultSet.getString("part01Name") + " and " + resultSet.getString("part02Name"));
+            }
+
+        } catch (SQLException sqle){
+            System.out.println(sqle.getMessage());
+        }
+        return result;
+    }
+    public boolean connectionAlreadyExists(String participant01, String participant02) throws Exception{
+        Statement selectStatement = connection.createStatement();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT p1.name, p2.name ");
+        sql.append("FROM (channel c INNER JOIN participants p1 ON c.participant_01 = p1.id) ");
+        sql.append("INNER JOIN participants p2 ON c.participant_02 = p2.id ");
+        sql.append("WHERE p1.name = '" + participant01 + "' AND p2.name = '" + participant02 + "' OR ");
+        sql.append("p1.name = '" + participant02 + "' AND p2.name = '" + participant01 + "';");
+        ResultSet combination = selectStatement.executeQuery(sql.toString());
+        if(combination.next()) return true;
         return false;
     }
 

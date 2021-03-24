@@ -56,4 +56,18 @@ public class TestHSQLDB {
         assertEquals(expect, actual);
         HSQLDB.instance.shutdown();
     }
+    @Test
+    public void testConnectionAlreadyExists(){
+        HSQLDB.instance.setupDatabase();
+        try{
+            assertTrue(HSQLDB.instance.connectionAlreadyExists("branch_hkg", "branch_wuh"));
+            assertTrue(HSQLDB.instance.connectionAlreadyExists("branch_hkg", "branch_cpt"));
+            assertTrue(HSQLDB.instance.connectionAlreadyExists("branch_cpt", "branch_syd"));
+            assertTrue(HSQLDB.instance.connectionAlreadyExists("branch_syd", "branch_sfo"));
+            assertFalse(HSQLDB.instance.connectionAlreadyExists("branch_hkg", "branch_syd"));
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        HSQLDB.instance.shutdown();
+    }
 }
