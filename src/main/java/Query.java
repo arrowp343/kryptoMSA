@@ -6,15 +6,15 @@ import hsqldb.HSQLDB;
 import java.util.List;
 
 public class Query {
-    Action action;
-    String message;
-    Algorithm algorithm;
-    int key;
-    String keyFile;
-    String name;
-    Type type;
-    String participant01, participant02;
-    String output;
+    private Action action;
+    private String message;
+    private Algorithm algorithm;
+    private int key;
+    private String keyFile;
+    private String name;
+    private Type type;
+    private String participant01, participant02;
+    private String output;
 
     public Query(String query) throws Exception{
 
