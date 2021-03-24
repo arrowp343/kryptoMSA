@@ -256,23 +256,26 @@ public enum HSQLDB {
         Statement insertConnection = connection.createStatement();
         insertConnection.execute("INSERT INTO channel (name, participant_01, participant_02) VALUES ('" + name + "', " + p1_id + ", " + p2_id + ")");
     }
-    public List<String> showChannel(){
+    public List<String> showChannel() throws Exception {
         List<String> result = new ArrayList<>();
-        try {
-            Statement selectStatement = connection.createStatement();
-            StringBuilder sql = new StringBuilder();
-            sql.append("SELECT c.name AS channelName, p1.name AS part01Name, p2.name AS part02Name ");
-            sql.append("FROM (channel c INNER JOIN participants p1 ON c.participant_01 = p1.id) ");
-            sql.append("INNER JOIN participants p2 ON c.participant_02 = p2.id;");
-            ResultSet resultSet = selectStatement.executeQuery(sql.toString());
-            while (resultSet.next()){
-                result.add(resultSet.getString("channelName") + " | " + resultSet.getString("part01Name") + " and " + resultSet.getString("part02Name"));
-            }
-
-        } catch (SQLException sqle){
-            System.out.println(sqle.getMessage());
+        Statement selectStatement = connection.createStatement();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT c.name AS channelName, p1.name AS part01Name, p2.name AS part02Name ");
+        sql.append("FROM (channel c INNER JOIN participants p1 ON c.participant_01 = p1.id) ");
+        sql.append("INNER JOIN participants p2 ON c.participant_02 = p2.id;");
+        ResultSet resultSet = selectStatement.executeQuery(sql.toString());
+        while (resultSet.next()){
+            result.add(resultSet.getString("channelName") + " | " + resultSet.getString("part01Name") + " and " + resultSet.getString("part02Name"));
         }
         return result;
+    }
+    public void dropChannel(String name) throws Exception{
+        Statement selectStatement = connection.createStatement();
+        ResultSet resultSet = selectStatement.executeQuery("SELECT * FROM channel WHERE name = '" + name + "';");
+        if(!resultSet.next()) throw new Exception("unknown channel " + name);
+
+        Statement deleteStatement = connection.createStatement();
+        deleteStatement.execute("DELETE FROM channel WHERE name = '" + name + "';");
     }
     public boolean connectionAlreadyExists(String participant01, String participant02) throws Exception{
         Statement selectStatement = connection.createStatement();

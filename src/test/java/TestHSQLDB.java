@@ -27,7 +27,6 @@ public class TestHSQLDB {
         }
         HSQLDB.instance.shutdown();
     }
-
     @Test
     public void testRegisterParticipant(){
         HSQLDB.instance.setupDatabase();
@@ -40,7 +39,6 @@ public class TestHSQLDB {
         }
         HSQLDB.instance.shutdown();
     }
-
     @Test
     public void testGetTypeOfParticipant(){
         HSQLDB.instance.setupDatabase();

@@ -70,10 +70,10 @@ public class GUI extends Application {
                         break;
                     case show:
                         outputArea.setText(query.getOutput());
-                        //TODO  show channel
                         break;
                     case drop:
-                        //TODO  drop channel
+                        HSQLDB.instance.dropChannel(query.getName());
+                        outputArea.setText(query.getOutput());
                         break;
                     case intrude:
                         //TODO  intrude channel

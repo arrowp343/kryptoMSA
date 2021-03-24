@@ -115,6 +115,7 @@ public class Query {
                 action = Action.drop;
                 expect(commandPart[1], "channel");
                 name = commandPart[2];
+                output = "channel " + name + " deleted";
             }
             case "intrude" -> {
                 action = Action.intrude;
