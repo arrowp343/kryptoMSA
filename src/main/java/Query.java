@@ -95,21 +95,21 @@ public class Query {
             }
             case "show" -> {
                 action = Action.show;
+                List<String> result;
                 switch (commandPart[1]){
                     case "participant":
-                        List<String> participants = HSQLDB.instance.showParticipants();
-                        StringBuilder outputParticipants = new StringBuilder();
-                        participants.forEach(participant -> outputParticipants.append(participant).append(System.getProperty("line.separator")));
-                        outputParticipants.deleteCharAt(outputParticipants.length() - 1);
-                        output = outputParticipants.toString();
+                        result = HSQLDB.instance.showParticipants();
                         break;
                     case "channel":
-                        //TODO show channel
+                        result = HSQLDB.instance.showChannel();
                         break;
                     default:
-                        output = "Syntax-Error at '" + commandPart[1] + "' - expected participant or channel";
-                        break;
+                        throw new Exception("Syntax-Error at '" + commandPart[1] + "' - expected participant or channel");
                 }
+                StringBuilder outputParticipants = new StringBuilder();
+                result.forEach(r -> outputParticipants.append(r).append(System.getProperty("line.separator")));
+                outputParticipants.deleteCharAt(outputParticipants.length() - 1);
+                output = outputParticipants.toString();
             }
             case "drop" -> {
                 action = Action.drop;
