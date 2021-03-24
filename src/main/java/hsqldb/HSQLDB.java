@@ -244,7 +244,7 @@ public enum HSQLDB {
         if(getTypeOfParticipant(participant01) != Type.normal) throw new Exception("Participant " + participant01 + " must be from type normal");
         if(getTypeOfParticipant(participant02) != Type.normal) throw new Exception("Participant " + participant02 + " must be from type normal");
 
-        int p1_id = 0, p2_id = 0;
+        int p1_id, p2_id;
         Statement getParticipantId = connection.createStatement();
         ResultSet p1 = getParticipantId.executeQuery("SELECT id FROM participants WHERE name = '" + participant01 + "';");
         if(p1.next()) p1_id = p1.getInt("id");
@@ -259,11 +259,10 @@ public enum HSQLDB {
     public List<String> showChannel() throws Exception {
         List<String> result = new ArrayList<>();
         Statement selectStatement = connection.createStatement();
-        StringBuilder sql = new StringBuilder();
-        sql.append("SELECT c.name AS channelName, p1.name AS part01Name, p2.name AS part02Name ");
-        sql.append("FROM (channel c INNER JOIN participants p1 ON c.participant_01 = p1.id) ");
-        sql.append("INNER JOIN participants p2 ON c.participant_02 = p2.id;");
-        ResultSet resultSet = selectStatement.executeQuery(sql.toString());
+        String sql = "SELECT c.name AS channelName, p1.name AS part01Name, p2.name AS part02Name " +
+                "FROM (channel c INNER JOIN participants p1 ON c.participant_01 = p1.id) " +
+                "INNER JOIN participants p2 ON c.participant_02 = p2.id;";
+        ResultSet resultSet = selectStatement.executeQuery(sql);
         while (resultSet.next()){
             result.add(resultSet.getString("channelName") + " | " + resultSet.getString("part01Name") + " and " + resultSet.getString("part02Name"));
         }
@@ -279,15 +278,13 @@ public enum HSQLDB {
     }
     public boolean connectionAlreadyExists(String participant01, String participant02) throws Exception{
         Statement selectStatement = connection.createStatement();
-        StringBuilder sql = new StringBuilder();
-        sql.append("SELECT p1.name, p2.name ");
-        sql.append("FROM (channel c INNER JOIN participants p1 ON c.participant_01 = p1.id) ");
-        sql.append("INNER JOIN participants p2 ON c.participant_02 = p2.id ");
-        sql.append("WHERE p1.name = '" + participant01 + "' AND p2.name = '" + participant02 + "' OR ");
-        sql.append("p1.name = '" + participant02 + "' AND p2.name = '" + participant01 + "';");
-        ResultSet combination = selectStatement.executeQuery(sql.toString());
-        if(combination.next()) return true;
-        return false;
+        String sql = "SELECT p1.name, p2.name " +
+                "FROM (channel c INNER JOIN participants p1 ON c.participant_01 = p1.id) " +
+                "INNER JOIN participants p2 ON c.participant_02 = p2.id " +
+                "WHERE p1.name = '" + participant01 + "' AND p2.name = '" + participant02 + "' OR " +
+                "p1.name = '" + participant02 + "' AND p2.name = '" + participant01 + "';";
+        ResultSet combination = selectStatement.executeQuery(sql);
+        return combination.next();
     }
 
     /*
