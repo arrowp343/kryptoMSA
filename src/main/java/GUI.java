@@ -173,8 +173,9 @@ public class GUI extends Application {
 
     public void createLogFile(String value){
         String directoryName = "log";
-        Date timeStamp = new Date();
-        String fileName = "kryptoLogFile" + timeStamp.toInstant() + ".txt";
+        Date time = new Date();
+        String timeStamp = time.toInstant().toString().replace(':','-');
+        String fileName = "kryptoLogFile" + timeStamp + ".txt";
 
         File directory = new File(directoryName);
         if (!directory.exists())
