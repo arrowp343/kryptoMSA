@@ -83,6 +83,7 @@ public class GUI extends Application {
                     case drop:
                         HSQLDB.instance.dropChannel(query.getName());
                         outputArea.setText(query.getOutput());
+                        createLogFile(query.getOutput());
                         break;
                     case intrude:
                         //TODO  intrude channel
@@ -179,7 +180,7 @@ public class GUI extends Application {
         if (!directory.exists())
             directory.mkdir();
 
-        File file = new File(directoryName + "/" + fileName);
+        File file = new File(directoryName + System.getProperty("file.separator") + fileName);
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
