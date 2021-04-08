@@ -1,3 +1,4 @@
+import hsqldb.HSQLDB;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -13,8 +14,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-
-import hsqldb.HSQLDB;
 
 public class GUI extends Application {
 
@@ -45,12 +44,12 @@ public class GUI extends Application {
 
         executeButton.setOnAction(event -> {
             System.out.println("[execute] pressed");
-            try{
+            try {
                 Query query = new Query(commandLineArea.getText());
-                switch (query.getAction()){
+                switch (query.getAction()) {
                     case encrypt:
                     case decrypt:
-                        switch (query.getAlgorithm()){
+                        switch (query.getAlgorithm()) {
                             case Shift:
                                 //TODO shift encrypt/decrypt
                             case RSA:
@@ -93,7 +92,7 @@ public class GUI extends Application {
                         HSQLDB.instance.sendMessage(query.getParticipant01(), query.getParticipant02(), query.getMessage(), encryptedMessage, query.getAlgorithm(), query.getKeyFile());
                         break;
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 outputArea.setText(e.getMessage());
             }
         });
@@ -105,9 +104,9 @@ public class GUI extends Application {
         });
 
         hBox.setOnKeyPressed(event -> {
-            if(event.getCode() == KeyCode.F3){          //Debug-Mode
+            if (event.getCode() == KeyCode.F3) {          //Debug-Mode
                 String message;
-                if(isDebugMode){
+                if (isDebugMode) {
                     isDebugMode = false;
                     message = "Debug-Mode was disabled";
                 } else {
@@ -115,16 +114,17 @@ public class GUI extends Application {
                     message = "Debug-Mode was enabled";
                 }
                 outputArea.setText(message);
-            }
-            else if(event.getCode() == KeyCode.F8) {     //Print latest Logfile in Output
+                createLogFile(message);
+            } else if (event.getCode() == KeyCode.F8) {     //Print latest Logfile in Output
                 try {
                     File dir = new File("log");
-                    File[] files  = dir.listFiles();
-                    if(files != null) {
+                    File[] files = dir.listFiles();
+                    if (files != null) {
                         Arrays.sort(files, new Comparator() {
                             public int compare(Object o1, Object o2) {
                                 return compare((File) o1, (File) o2);
                             }
+
                             private int compare(File f1, File f2) {
                                 long result = f2.lastModified() - f1.lastModified();
                                 if (result > 0) {
@@ -171,7 +171,7 @@ public class GUI extends Application {
         primaryStage.show();
     }
 
-    public void createLogFile(String value){
+    public void createLogFile(String value) {
         String directoryName = "log";
         Date time = new Date();
         String timeStamp = time.toInstant().toString().replace(':','-');
@@ -182,13 +182,12 @@ public class GUI extends Application {
             directory.mkdir();
 
         File file = new File(directoryName + System.getProperty("file.separator") + fileName);
-        try{
+        try {
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write(value);
             bw.close();
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

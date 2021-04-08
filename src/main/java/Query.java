@@ -1,4 +1,8 @@
-import enums.*;
+import cryptTool.CryptTool;
+import enums.Action;
+import enums.Algorithm;
+import enums.Show;
+import enums.Type;
 
 public class Query {
     private Action action;
@@ -12,7 +16,7 @@ public class Query {
     private String participant01, participant02;
     private String output;
 
-    public Query(String query) throws Exception{
+    public Query(String query) throws Exception {
 
         String[] command = query.split("\"");
         String[] commandPart;
@@ -38,12 +42,14 @@ public class Query {
                         expect(commandPart[6], "and");
                         expect(commandPart[7], "key");
                         key = Integer.parseInt(commandPart[8]);
+                        output = new CryptTool(algorithm, action, message, String.valueOf(key)).getOutput();
                     }
                     case "rsa" -> {
                         algorithm = Algorithm.RSA;
                         expect(commandPart[6], "and");
                         expect(commandPart[7], "keyfile");
                         keyFile = commandPart[8];
+                        output = new CryptTool(algorithm, action, message, keyFile).getOutput();
                     }
                     default -> throw new Exception("Unknown Algorithm '" + commandPart[5] + "' - choose between classic or rsa");
                 }
@@ -65,6 +71,7 @@ public class Query {
                     }
                     default -> throw new Exception("Unknown Algorithm '" + commandPart[6] + "' - choose between classic or rsa");
                 }
+                output = new CryptTool(algorithm, action, message, keyFile).getOutput();
             }
             case "register" -> {
                 action = Action.register;
@@ -138,24 +145,53 @@ public class Query {
             }
         }
     }
-    private void expect(String expect, String commandPart) throws Exception{
-        if(!commandPart.equals(expect))
+
+    private void expect(String expect, String commandPart) throws Exception {
+        if (!commandPart.equals(expect))
             throw new Exception("Syntax-Error at '" + commandPart + "' - expected " + expect);
     }
 
-    public Action getAction(){
+    public Action getAction() {
         return action;
     }
-    public String getMessage() { return message; }
-    public Algorithm getAlgorithm(){
+
+    public String getMessage() {
+        return message;
+    }
+
+    public Algorithm getAlgorithm() {
         return algorithm;
     }
-    public int getKey() { return key; }
-    public String getKeyFile() { return keyFile; }
-    public String getName() { return name; }
-    public Show getShow() { return show; }
-    public Type getType() { return type; }
-    public String getParticipant01() { return participant01; }
-    public String getParticipant02() { return participant02; }
-    public String getOutput() { return output; }
+
+    public int getKey() {
+        return key;
+    }
+
+    public String getKeyFile() {
+        return keyFile;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Show getShow() {
+        return show;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public String getParticipant01() {
+        return participant01;
+    }
+
+    public String getParticipant02() {
+        return participant02;
+    }
+
+    public String getOutput() {
+        return output;
+    }
 }
