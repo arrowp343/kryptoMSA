@@ -47,18 +47,8 @@ public class GUI extends Application {
             try {
                 Query query = new Query(commandLineArea.getText());
                 switch (query.getAction()) {
-                    case encrypt:
-                    case decrypt:
-                        switch (query.getAlgorithm()) {
-                            case Shift:
-                                //TODO shift encrypt/decrypt
-                            case RSA:
-                                //TODO rsa encrypt/decrypt
-                                break;
-                        }
-                        break;
-                    case crack:
-                        //TODO  crack shift/rsa
+                    case encrypt, decrypt, crack:
+                        outputArea.setText(query.getOutput());
                         break;
                     case register:
                         HSQLDB.instance.registerParticipant(query.getName(), query.getType());
@@ -88,7 +78,7 @@ public class GUI extends Application {
                         //TODO  intrude channel
                         break;
                     case send:
-                        String encryptedMessage = query.getMessage();   //TODO nachricht verschlüsseln
+                        String encryptedMessage = query.getMessage();   //TODO nachricht verschlüsseln query.getOutput()?
                         HSQLDB.instance.sendMessage(query.getParticipant01(), query.getParticipant02(), query.getMessage(), encryptedMessage, query.getAlgorithm(), query.getKeyFile());
                         break;
                 }
@@ -174,7 +164,7 @@ public class GUI extends Application {
     public void createLogFile(String value) {
         String directoryName = "log";
         Date time = new Date();
-        String timeStamp = time.toInstant().toString().replace(':','-');
+        String timeStamp = time.toInstant().toString().replace(':', '-');
         String fileName = "kryptoLogFile" + timeStamp + ".txt";
 
         File directory = new File(directoryName);
